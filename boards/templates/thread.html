@@ -1,0 +1,36 @@
+{% extends "template.html" %}
+
+{% block keywords %}{{ board.keywords }}{% endblock %}
+{% block description %}{{ board.description }}{% endblock %}
+{% block title %}
+    /{{ board.url }}/ -
+    {% if thread[0].subject %}
+        {{ thread[0].subject }}
+    {% else %}
+        {{ thread[0].text_comment[:50] }}
+    {% endif %}
+    - {{ board.title }} -
+{% endblock %}
+
+{% block favicon %}{% if board.category.nsfw == 0 %}{{ url_for('static', filename='favicon-ws.ico') }}{% endif %}{% endblock %}
+{% block css %}
+    {% if board.category.nsfw == 1 %}
+        <link rel="stylesheet" type="text/css" href="//s.4cdn.org/css/yotsubanew.css"/>
+    {% else %}
+        <link rel="stylesheet" type="text/css" href="//s.4cdn.org/css/yotsubluenew.css"/>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <div class="boardBanner">
+        <div id="bannerCnt" class="title desktop" data-src="159.gif">
+            <img alt="4chan" src=""> <!-- @TODO: EDIT JS SO I CAN USE MY OWN IMAGES -->
+        </div>
+        <div class="boardTitle">/{{ board.url }}/ - {{ board.title }}</div>
+    </div>
+    <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+    :::<br />
+
+    LOL
+{% endblock %}
+

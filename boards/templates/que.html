@@ -1,0 +1,26 @@
+{% extends "template.html" %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block title %}Que - {% endblock %}
+
+{% block body %}
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <form method="POST" action="/que">
+        {{ form.csrf_token }}
+        <dl>
+            {{ render_field(form.url, size = 65, maxlength = 60) }}
+        </dl>
+        <br />
+        <input type="submit" value="Submit">
+    </form>
+    <br />
+    {% for que in ques %}
+        <a href="https://boards.4chan.org/{{ que.thread_post.thread.board.url }}/thread/{{ que.thread_post.post.no }}" target="_blank">
+            https://boards.4chan.org/{{ que.thread_post.thread.board.url }}/thread/{{ que.thread_post.post.no }}
+        </a><br />
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,168 @@
+{% extends "template.html" %}
+
+{% block keywords %}{{ board.keywords }}{% endblock %}
+{% block description %}{{ board.description }}{% endblock %}
+{% block title %}/{{ board.url }}/ - {{ board.title }} - {% endblock %}
+
+{% block favicon %}
+    {% if board.category.nsfw == 1 %}
+        {{ url_for('static', filename='favicon.ico') }}
+    {% else %}
+        {{ url_for('static', filename='favicon-ws.ico') }}
+    {% endif %}
+{% endblock %}
+{% block css %}
+    {% if board.category.nsfw == 1 %}
+        <link rel="stylesheet" type="text/css" href="//s.4cdn.org/css/yotsubanew.css"/>
+    {% else %}
+        <link rel="stylesheet" type="text/css" href="//s.4cdn.org/css/yotsubluenew.css"/>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <div class="boardBanner">
+        <div id="bannerCnt" class="title desktop" data-src="159.gif">
+            <img alt="4chan" src=""> <!-- @TODO: EDIT JS SO I CAN USE MY OWN IMAGES -->
+        </div>
+        <div class="boardTitle">/{{ board.url }}/ - {{ board.title }}</div>
+    </div>
+    <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+    :::<br />
+    <div class="board">
+        {% for posts in threads %}
+            {% set op = posts[0] %}
+            <div id="t{{ op.no }}" class="thread">
+                <div id="pc{{ op.no }}" class="postContainer opContainer">
+                    <div id="p{{ op.no }}" class="post op"><span id="sa{{ op.no }}"><img alt="H" class="extButton threadHideButton" data-cmd="hide" data-id="{{ op.no }}" src="//s.4cdn.org/image/buttons/futaba/post_expand_minus.png" title="Hide thread"></span>
+
+                        <div class="postInfoM mobile" id="pim{{ op.no }}">
+                            <span class="nameBlock"><span class="name">{{ op.name }}</span><br><span class="subject">{% if op.subject %}{{ op.subject }}{% endif %}</span></span>
+                            <span class="dateTime postNum" data-utc="{{ op.timestamp }}">{{ convert_utc_datetime(op.timestamp) }} <a href="thread/{{ op.no }}#p{{ op.no }}" title="Link to this post">No.</a><a href="thread/{{ op.no }}#q{{ op.no }}" title="Reply to this post">{{ op.no }}</a></span>
+                        </div>
+                        <div class="file" id="f{{ op.no }}">
+                            <div class="fileText" id="fT{{ op.no }}">File: <a href="//i.riyyi.com/{{ op.image.name }}{{ op.image.extension }}" target="_blank">{{ op.image.name }}{{ op.image.extension }}</a> ({{ humanize.naturalsize(op.image.size) }}, {{ op.image.width }}x{{ op.image.height }})</div>
+                            <a class="fileThumb" href="//i.riyyi.com/{{ op.image.name }}{{ op.image.extension }}" target="_blank">
+                                <img src="//i.riyyi.com/{{ op.image.name }}s.jpg" alt="{{ humanize.naturalsize(op.image.size) }}" data-md5="{{ op.image.md5 }}" style="height: {{ op.image.thumbnail_height }}px; width: {{ op.image.thumbnail_width }}px;">
+                                <div data-tip="" data-tip-cb="mShowFull" class="mFileInfo mobile">{{ humanize.naturalsize(op.image.size) }} {{ op.image.extension[1:].upper() }}</div>
+                            </a>
+                        </div>
+
+                        <div class="postInfo desktop" id="pi{{ op.no }}">
+                            <input name="{{ op.no }}" value="delete" type="checkbox">
+                            <span class="subject">{% if op.subject %}{{ op.subject }}{% endif %}</span>
+                            <span class="nameBlock {% if op.rank_ID %}capcode{{ op.rank.capcode.title() }}{% endif %}">
+                                <span class="name {% if op.rank_ID %}capcode{% endif %}">{{ op.name }}</span>
+                                {% if op.rank_ID %}
+                                    <strong class="capcode hand id_{{ op.rank.capcode }}" title="Highlight posts by {{ op.rank.display_name }}s">## {{ op.rank.capcode.title() }}</strong>
+                                    <img src="{{ url_for('static', filename=op.rank.image) }}" alt="Mod Icon" title="This user is a 4chan {{ op.rank.display_name }}." class="identityIcon retina">
+                                {% elif op.poster_id %}
+                                    <span class="posteruid id_{{ op.poster_id }}">
+                                        {% set color = strtoint(op.poster_id) %}
+                                        (ID: <span style="background-color: rgb({{ color % 255 }}, {{ (color / 2)|int % 255 }}, {{ (color / 4)|int % 255 }}); color: white;" class="hand" title="Highlight posts by this ID">{{ op.poster_id }}</span>)
+                                    </span>
+                                {% endif %}
+                            </span>
+                            <span class="dateTime" data-utc="{{ op.timestamp }}">{{ convert_utc_datetime(op.timestamp) }}</span>
+                            <span class="postNum desktop">
+                                <a href="thread/{{ op.no }}#p{{ op.no }}" title="Link to this post">No.</a>
+                                <a href="thread/{{ op.no }}#q{{ op.no }}" title="Reply to this post">{{ op.no }}</a> &nbsp;
+                                <span>[<a href="thread/{{ op.no }}" class="replylink">Reply</a>]</span>
+                                {% if thread[loop.index - 1].sticky %}<img src="{{ url_for('static', filename='sticky.gif') }}" alt="Sticky" title="Sticky" class="stickyIcon retina">{% endif %}
+                                {% if thread[loop.index - 1].closed %}<img src="{{ url_for('static', filename='closed.gif') }}" alt="Closed" title="Closed" class="closedIcon retina">{% endif %}
+                                {% if thread[loop.index - 1].archived %}<img src="{{ url_for('static', filename='archived.gif') }}" alt="Archived" title="Archived" class="archivedIcon retina">{% endif %}
+                            </span><a data-cmd="post-menu" title="Post menu" class="postMenuBtn" href="#">▶</a>
+                            {# <div class="backlink" id="bl_{{ op.no }}"><span><a href="thread/{{ op.no }}#p{{ op.no }}" class="quotelink">&gt;&gt;658665728</a> </span><span><a href="thread/658664178#p658665772" class="quotelink">&gt;&gt;658665772</a> </span></div> #}
+                        </div>
+                        <blockquote class="postMessage" id="m{{ op.no }}">
+                            {{ op.html_comment|safe }}
+                        </blockquote>
+
+                    </div>
+                    <div class="postLink mobile"><span class="info">X Replies (/ X Images)</span><a href="thread/{{ op.no }}" class="button">View Thread</a></div>
+                </div><span class="summary desktop">X replies (and X images) omitted. <a href="thread/{{ op.no }}" class="replylink">Click here</a> to view.</span>
+
+                {% for post in posts[1:] %}
+                    <div class="postContainer replyContainer" id="pc{{ post.no }}">
+                        <div class="sideArrows" id="sa{{ post.no }}">&gt;&gt;</div>
+                        <div id="p{{ post.no }}" class="post reply">
+                            <div class="postInfoM mobile" id="pim{{ post.no }}">
+                                <span class="nameBlock"><span class="name">Anonymous</span><br /><span class="subject">{% if op.subject %}{{ op.subject }}{% endif %}</span></span>
+                                <span class="dateTime postNum" data-utc="{{ post.timestamp }}">
+                                    {{ convert_utc_datetime(post.timestamp) }}
+                                    <a href="thread/{{ op.no }}#p{{ post.no }}" title="Link to this post">No.</a>
+                                    <a href="thread/{{ op.no }}#q{{ post.no }}" title="Reply to this post">{{ post.no }}</a>
+                                </span>
+                            </div>
+                            <div class="postInfo desktop" id="pi{{ post.no }}">
+                                <input name="{{ post.no }}" value="delete" type="checkbox">
+                                <span class="nameBlock {% if post.rank_ID %}capcode{{ post.rank.capcode.title() }}{% endif %}">
+                                    <span class="name {% if post.rank_ID %}capcode{% endif %}">{{ post.name }}</span>
+                                    {% if post.rank_ID %}
+                                        <strong class="capcode hand id_{{ post.rank.capcode }}" title="Highlight posts by {{ post.rank.display_name }}s">## {{ post.rank.capcode.title() }}</strong>
+                                        <img src="{{ url_for('static', filename=post.rank.image) }}" alt="Mod Icon" title="This user is a 4chan {{ post.rank.display_name }}." class="identityIcon retina">
+                                    {% elif post.poster_id %}
+                                        <span class="posteruid id_{{ post.poster_id }}">
+                                            {% set color = strtoint(post.poster_id) %}
+                                            (ID: <span style="background-color: rgb({{ color % 255 }}, {{ (color / 2)|int % 255 }}, {{ (color / 4)|int % 255 }}); color: white;" class="hand" title="Highlight posts by this ID">{{ post.poster_id }}</span>)
+                                        </span>
+                                    {% endif %}
+                                </span>
+                                <span class="dateTime" data-utc="{{ post.timestamp }}">{{ convert_utc_datetime(post.timestamp) }}</span>
+                                <span class="postNum desktop"><a href="thread/{{ op.no }}#p{{ post.no }}" title="Link to this post">No.</a><a href="thread/{{ op.no }}#q{{ post.no }}" title="Reply to this post">{{ post.no }}</a></span>
+                                <a data-cmd="post-menu" title="Post menu" class="postMenuBtn" href="#">▶</a>
+                            </div>
+                            {% if post.image_ID %}
+                                <div class="file" id="f{{ post.no }}">
+                                    <div class="fileText" id="fT{{ post.no }}">
+                                        File: <a href="//i.riyyi.com/{{ post.image.name }}{{ post.image.extension }}" target="_blank">{{ post.image.name }}{{ post.image.extension }}</a> ({{ humanize.naturalsize(post.image.size) }}, {{ post.image.width }}x{{ post.image.height }})
+                                    </div>
+                                    <a class="fileThumb" href="//i.riyyi.com/{{ post.image.name }}{{ post.image.extension }}" target="_blank">
+                                        <img src="//i.riyyi.com/{{ post.image.name }}s.jpg" alt="{{ humanize.naturalsize(post.image.size) }}" data-md5="{{ post.image.md5 }}" style="height: {{ post.image.thumbnail_height }}px; width: {{ post.image.thumbnail_width }}px;">
+                                        <div data-tip="" data-tip-cb="mShowFull" class="mFileInfo mobile">{{ humanize.naturalsize(post.image.size) }} {{ op.image.extension[1:].upper() }}</div>
+                                    </a>
+                                </div>
+                            {% endif %}
+                            <blockquote class="postMessage" id="m{{ post.no }}">
+                                {{ post.html_comment|safe }}
+                            </blockquote>
+                        </div>
+                    </div>
+                {% endfor %}
+                <br /><br />
+            </div>
+            <hr>
+        {% endfor %}
+    </div>
+    :::
+
+    <div class="pagelist desktop">
+        {% if page > 1 %}
+            <div class="prev">
+                <form class="pageSwitcherForm" action="{% if page - 1 == 1 %}./{% else %}{{ page - 1 }}{% endif %}">
+                    <input value="Previous" accesskey="z" type="submit">
+                </form>
+            </div>
+        {% endif %}
+        <div class="pages">
+            {% for i in range(1, pages + 1) %}
+                {% if i == page %}
+                    [<strong><a href="">{{ i }}</a></strong>]
+                {% else %}
+                    [<a href="{% if page - 1 == 1 %}./{% else %}{{ i }}{% endif %}">{{ i }}</a>]
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="next">
+            {% if page < pages %}
+                <form class="pageSwitcherForm" action="{{ page + 1 }}">
+                    <input value="Next" accesskey="x" type="submit">
+                </form>
+            {% else %}
+                <span>Next</span>
+            {% endif %}
+        </div>
+        <div class="pages cataloglink">
+            <a href="./catalog">Catalog</a>
+        </div>
+    </div>
+{% endblock %}

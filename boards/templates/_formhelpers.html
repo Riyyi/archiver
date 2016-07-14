@@ -1,0 +1,15 @@
+{% macro render_field(field) %}
+    <dt class="form_helper">
+        {{ field.label }} {% if field.flags.required %}<span class="color_red">*</span>{% endif %}
+    </dt>
+    <dd>
+        {{ field(**kwargs)|safe }}
+        {% if field.errors %}
+            <ul class="error">
+                {% for error in field.errors %}
+                    <li class="color_red">{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </dd>
+{% endmacro %}

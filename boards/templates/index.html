@@ -1,0 +1,44 @@
+{% extends "template.html" %}
+{% from "_categoryhelper.html" import render_category %}
+
+{% block keywords %}imageboard,image board,forum,bbs,anonymous,chan,anime,manga,ecchi,hentai,video games,english,japan{% endblock %}
+{% block description %}imageboard is a simple image-based bulletin board where anyone can post comments and share images anonymously.{% endblock %}
+{% block body %}
+<div id="doc">
+    <br />
+    <div id="hd">
+        <div id="logo-fp">
+            <a href="{{ url_for('index') }}" title="Home"><img alt="Archive" src="{{ url_for('static', filename='logo.png') }}"></a>
+        </div>
+    </div>
+    <br />
+    <div class="box-outer top-box" id="boards">
+        <div class="box-inner">
+            <div class="boxbar">
+                <h2>Boards</h2>
+            </div>
+            <div class="boxcontent">
+                <div class="column">
+                    {{ render_category(categories[0]) }}
+                    {{ render_category(categories[1]) }}
+                </div>
+                <div class="column">
+                    {{ render_category(categories[2]) }}
+                </div>
+                <div class="column">
+                    {{ render_category(categories[3]) }}
+                </div>
+                <div class="column">
+                    {{ render_category(categories[4]) }}
+                    {{ render_category(categories[5]) }}
+                </div>
+                <div class="column">
+                    {{ render_category(categories[6]) }}
+                </div>
+                <br class="clear-bug">
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

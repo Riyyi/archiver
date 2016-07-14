@@ -1,0 +1,48 @@
+/* Index page */
+
+/*.navigation a {*/
+    /*color: #800;*/
+    /*text-decoration: none;*/
+/*}*/
+
+/*.navigation a:hover {*/
+    /*color: #e00;*/
+    /*text-decoration: underline;*/
+/*}*/
+
+/************/
+
+/* Board/Thread */
+
+/*This makes the title of the 'Katoenderie' rank black*/
+.nameBlock.capcodeKatoenderie span.name, span.capcodeKatoenderie a span.name, span.capcodeKatoenderie span.postertrip, span.capcodeKatoenderie strong.capcode {
+    color: #000 !important;
+}
+
+/*This gives the title 'ID' rounded edges*/
+.posteruid .hand {
+	padding: 0 5px;
+	border-radius: 6px;
+	font-size: 0.8em;
+}
+
+/************/
+
+/* Que page */
+
+body ul.navigation li {
+    display: inline;
+}
+
+body ul.error li {
+    display: block;
+}
+
+dt.form_helper {
+    padding-top: 10px;
+}
+
+.color_red {
+    color: #D00;
+}
+/************/
